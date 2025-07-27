@@ -1,0 +1,473 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>塔羅靈數計算器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.12/lunar.min.js"></script>
+    <link rel="stylesheet" href="./css/custom.css">
+
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#0d9488">
+</head>
+<body class="p-4">
+    <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="p-6">
+            <h1 class="text-3xl font-bold text-center text-indigo-800 mb-6">塔羅靈數計算器</h1>
+            
+            <!-- 頁籤導航 -->
+            <div class="flex border-b mb-6">
+                <button class="tab active px-6 py-3 font-medium text-lg" data-tab="calculator">靈數計算</button>
+                <button class="tab px-6 py-3 font-medium text-lg" data-tab="lifepath">生命軌跡</button>
+                <button class="tab px-6 py-3 font-medium text-lg" data-tab="yearFlow">今年流月 / 流日</button>
+                <button class="tab px-6 py-3 font-medium text-lg" data-tab="editor">內容編輯</button>
+                <button class="tab px-6 py-3 font-medium text-lg" data-tab="caseReport">個案流年報告</button>
+            </div>   
+            
+            <!-- 靈數計算頁面 -->
+            <div id="calculator" class="tab-content active">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 輸入區域 -->
+                    <div class="bg-indigo-50 p-6 rounded-lg">
+                        <h2 class="text-xl font-semibold mb-4 text-indigo-700">出生日期</h2>
+                        
+                        <div class="mb-6">
+                            <label class="text-gray-700 mb-2 block">國曆出生日期</label>
+                            <div class="flex gap-2">
+                                <div class="w-1/3 relative">
+                                    <input type="number" id="rocYear" placeholder="民國年" class="w-full p-2 border rounded" min="1" max="150">
+                                    <div class="text-xs text-gray-500 mt-1">民國年</div>
+                                </div>
+                                <div class="w-1/3 relative">
+                                    <input type="number" id="solarMonth" placeholder="月" class="w-full p-2 border rounded" min="1" max="12">
+                                    <div class="text-xs text-gray-500 mt-1">月</div>
+                                </div>
+                                <div class="w-1/3 relative">
+                                    <input type="number" id="solarDay" placeholder="日" class="w-full p-2 border rounded" min="1" max="31">
+                                    <div class="text-xs text-gray-500 mt-1">日</div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                <span id="westernYearDisplay" class="font-medium">西元年: -</span>
+                            </div>
+                            <!-- 國曆日期資訊顯示區 -->
+                            <div id="solarDateInfo" class="date-info mt-3 p-3 bg-white rounded-lg border border-indigo-200">
+                                <p class="text-sm text-gray-700">您輸入的國曆日期：<span id="solarDateDisplay" class="font-medium">-</span></p>
+                            </div>
+                            <button id="convertBtn" class="mt-3 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition">國曆→農曆</button>
+    <div class="flex items-center gap-2 ml-3">
+      <label for="soulOffset" class="text-sm text-gray-700 whitespace-nowrap">靈魂換日線</label>
+      <select id="soulOffset" class="border rounded px-2 py-1 text-sm">
+          <option value="-1">-1</option>
+          <option value="0" selected>0</option>
+          <option value="1">+1</option>
+      </select>
+    </div>
+    
+
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="text-gray-700 mb-2 block">農曆出生日期</label>
+                            <div class="flex gap-2">
+                                <div class="w-1/3 relative">
+                                    <input type="number" id="lunarYear" placeholder="西元年" class="w-full p-2 border rounded" min="1900" max="2100">
+                                    <div class="text-xs text-gray-500 mt-1">西元年</div>
+                                </div>
+                                <div class="w-1/3 relative">
+                                    <input type="number" id="lunarMonth" placeholder="月" class="w-full p-2 border rounded" min="1" max="12">
+                                    <div class="text-xs text-gray-500 mt-1">月</div>
+                                </div>
+                                <div class="w-1/3 relative">
+                                    <input type="number" id="lunarDay" placeholder="日" class="w-full p-2 border rounded" min="1" max="30">
+                                    <div class="text-xs text-gray-500 mt-1">日</div>
+                                </div>
+                            </div>
+                            <!-- 農曆日期資訊顯示區 -->
+                            <div id="lunarDateInfo" class="date-info mt-3 p-3 bg-white rounded-lg border border-purple-200">
+                                <p class="text-sm text-gray-700">您輸入的農曆日期：<span id="lunarDateDisplay" class="font-medium">-</span></p>
+                            </div>
+                        </div>
+                        
+                        <button id="calculateBtn" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition">計算靈數</button>
+                    </div>
+                    
+                    <!-- 結果區域 -->
+                    <div class="bg-white border border-gray-200 p-6 rounded-lg">
+                        <h2 class="text-xl font-semibold mb-4 text-indigo-700">計算結果</h2>
+                        
+                        <div class="mb-6">
+                            <h3 class="font-medium text-gray-700 mb-2">國曆靈數</h3>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="bg-indigo-100 p-4 rounded-lg text-center">
+                                    <div class="text-sm text-gray-600">本性</div>
+                                    <div id="solarEssence" class="text-2xl font-bold text-indigo-800 numerology-value" data-type="numerology">-</div>
+                                    <div id="solarEssenceCard" class="text-sm text-indigo-600">-</div>
+            <div class="text-sm text-gray-600 mt-1">貴人/小人</div>
+            <div id="solarEssenceBenefactor" class="text-lg text-indigo-800">-</div>
+            <div id="solarEssenceBenefactorCard" class="text-sm text-indigo-600">-</div>
+                                </div>
+                                <div class="bg-indigo-100 p-4 rounded-lg text-center">
+                                    <div class="text-sm text-gray-600">外在</div>
+                                    <div id="solarExternal" class="text-2xl font-bold text-indigo-800 numerology-value" data-type="numerology">-</div>
+                                    <div id="solarExternalCard" class="text-sm text-indigo-600">-</div>
+            <div class="text-sm text-gray-600 mt-1">貴人/小人</div>
+            <div id="solarExternalBenefactor" class="text-lg text-indigo-800">-</div>
+            <div id="solarExternalBenefactorCard" class="text-sm text-indigo-600">-</div>
+                                </div>
+                                <div class="bg-indigo-100 p-4 rounded-lg text-center">
+                                    <div class="text-sm text-gray-600">內在</div>
+                                    <div id="solarInternal" class="text-2xl font-bold text-indigo-800 numerology-value" data-type="numerology">-</div>
+                                    <div id="solarInternalCard" class="text-sm text-indigo-600">-</div>
+            <div class="text-sm text-gray-600 mt-1">貴人/小人</div>
+            <div id="solarInternalBenefactor" class="text-lg text-indigo-800">-</div>
+            <div id="solarInternalBenefactorCard" class="text-sm text-indigo-600">-</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-2">農曆靈數</h3>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="bg-purple-100 p-4 rounded-lg text-center">
+                                    <div class="text-sm text-gray-600">本性</div>
+                                    <div id="lunarEssence" class="text-2xl font-bold text-purple-800 numerology-value" data-type="numerology">-</div>
+                                    <div id="lunarEssenceCard" class="text-sm text-purple-600">-</div>
+            <div class="text-sm text-gray-600 mt-1">貴人/小人</div>
+            <div id="lunarEssenceBenefactor" class="text-lg text-purple-800">-</div>
+            <div id="lunarEssenceBenefactorCard" class="text-sm text-purple-600">-</div>
+                                </div>
+                                <div class="bg-purple-100 p-4 rounded-lg text-center">
+                                    <div class="text-sm text-gray-600">外在</div>
+                                    <div id="lunarExternal" class="text-2xl font-bold text-purple-800 numerology-value" data-type="numerology">-</div>
+                                    <div id="lunarExternalCard" class="text-sm text-purple-600">-</div>
+            <div class="text-sm text-gray-600 mt-1">貴人/小人</div>
+            <div id="lunarExternalBenefactor" class="text-lg text-purple-800">-</div>
+            <div id="lunarExternalBenefactorCard" class="text-sm text-purple-600">-</div>
+                                </div>
+                                <div class="bg-purple-100 p-4 rounded-lg text-center">
+                                    <div class="text-sm text-gray-600">內在</div>
+                                    <div id="lunarInternal" class="text-2xl font-bold text-purple-800 numerology-value" data-type="numerology">-</div>
+                                    <div id="lunarInternalCard" class="text-sm text-purple-600">-</div>
+            <div class="text-sm text-gray-600 mt-1">貴人/小人</div>
+            <div id="lunarInternalBenefactor" class="text-lg text-purple-800">-</div>
+            <div id="lunarInternalBenefactorCard" class="text-sm text-purple-600">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 今年流年 -->
+                <div class="mt-8 bg-gradient-to-r from-indigo-100 to-purple-100 p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4 text-indigo-700">今年流年</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-2">國曆流年 (外在事件)</h3>
+                            <div class="flex items-center">
+                                <div id="currentSolarYear" class="text-3xl font-bold text-indigo-800 mr-3 numerology-value" data-type="yearly">-</div>
+                                <div id="currentSolarYearCard" class="text-lg text-indigo-600">-</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-2">農曆流年 (內心戲)</h3>
+                            <div class="flex items-center">
+                                <div id="currentLunarYear" class="text-3xl font-bold text-purple-800 mr-3 numerology-value" data-type="yearly">-</div>
+                                <div id="currentLunarYearCard" class="text-lg text-purple-600">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 本月流月與本日流日 -->
+                <div class="mt-8 bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4 text-indigo-700">本月流月 / 本日流日</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-2">國曆本月流月</h3>
+                            <div class="flex items-center">
+                                <div id="currentSolarMonth" class="text-3xl font-bold text-indigo-800 mr-3 ">-</div>
+                                <div id="currentSolarMonthCard" class="text-lg text-indigo-600">-</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-2">農曆本月流月</h3>
+                            <div class="flex items-center">
+                                <div id="currentLunarMonth" class="text-3xl font-bold text-purple-800 mr-3 ">-</div>
+                                <div id="currentLunarMonthCard" class="text-lg text-purple-600">-</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-2">國曆本日流日</h3>
+                            <div class="flex items-center">
+                                <div id="currentSolarDay" class="text-3xl font-bold text-indigo-800 mr-3 ">-</div>
+                                <div id="currentSolarDayCard" class="text-lg text-indigo-600">-</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-2">農曆本日流日</h3>
+                            <div class="flex items-center">
+                                <div id="currentLunarDay" class="text-3xl font-bold text-purple-800 mr-3 ">-</div>
+                                <div id="currentLunarDayCard" class="text-lg text-purple-600">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 前後五年流年 -->
+                <div class="mt-8 bg-white border border-gray-200 p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4 text-indigo-700">前後五年流年</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="py-2 px-4 border-b text-left">年份</th>
+                                    <th class="py-2 px-4 border-b text-left">國曆流年</th>
+                                    <th class="py-2 px-4 border-b text-left">農曆流年</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tenYearForecast">
+                                <!-- 動態生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 生命軌跡頁面 -->
+            <div id="lifepath" class="tab-content">
+                <h2 class="text-xl font-semibold mb-4 text-indigo-700">0-99歲生命軌跡</h2>
+                <div class="bg-white border border-gray-200 p-6 rounded-lg">
+                    <div class="overflow-x-auto">
+                        <table class="w-full" id="lifepathTable">
+                            <!-- 動態生成 -->
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 內容編輯頁面 -->
+            <div id="editor" class="tab-content">
+                <h2 class="text-xl font-semibold mb-4 text-indigo-700">內容編輯</h2>
+                
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2">選擇編輯類型</label>
+                    <select id="editType" class="w-full p-2 border rounded">
+                        <option value="numerology">靈數解釋</option>
+                        <option value="yearlyTheme">流年課題</option>
+                    </select>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2">選擇數字</label>
+                    <select id="editNumber" class="w-full p-2 border rounded">
+                        <!-- 動態生成 -->
+                    </select>
+                </div>
+                
+                <div id="numerologyEditor" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">正面特質</label>
+                        <textarea id="positiveTraits" class="w-full p-2 border rounded h-24"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">負面特質</label>
+                        <textarea id="negativeTraits" class="w-full p-2 border rounded h-24"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">其他</label>
+                        <textarea id="others" class="w-full p-2 border rounded h-24"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">性格重點</label>
+                        <textarea id="keyPoints" class="w-full p-2 border rounded h-24"></textarea>
+                    </div>
+                </div>
+                
+                <div id="yearlyThemeEditor" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-gray-700 mb-2">流年課題</label>
+                        <textarea id="yearlyTheme" class="w-full p-2 border rounded h-36"></textarea>
+                    </div>
+                </div>
+                
+                <button id="saveContentBtn" class="mt-4 bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition">儲存內容</button>
+                <button id="exportContentBtn" class="mt-4 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition ml-2">匯出內容</button>
+                <button id="importContentBtn" class="mt-4 bg-yellow-600 text-white py-3 px-4 rounded-lg hover:bg-yellow-700 transition ml-2">匯入內容</button>
+                <input type="file" id="importFileInput" accept=".json" class="hidden" />
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 靈數解釋彈窗 -->
+    <div id="numerologyModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle" class="text-xl font-semibold mb-4 text-indigo-700"></h2>
+            <div id="modalContent" class="space-y-4"></div>
+        </div>
+    </div>
+
+    
+
+
+
+    
+            <!-- 個案流年報告 -->
+            <div id="caseReport" class="tab-content">
+                <div class="bg-indigo-50 p-6 rounded-lg space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                        <div>
+                            <label class="block text-gray-700 mb-2">個案姓名</label>
+                            <input id="caseName" type="text" placeholder="請輸入姓名" class="w-full p-2 border rounded">
+                        </div>
+                        <div class="md:col-span-2 text-right">
+                            <button id="generateReportBtn" class="mr-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">產生 / 更新報告</button>
+                            <button id="exportPdfBtn" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700">匯出 PDF</button>
+                        </div>
+                    </div>
+
+                    <div id="caseReportPrintable" class="bg-white p-6 rounded-lg border border-indigo-200 space-y-6">
+                        <!-- 概要 -->
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                            <div>
+                                <h2 class="text-2xl font-semibold text-indigo-800">個案流年報告</h2>
+                                <div class="text-gray-600 mt-2">
+                                    <div>姓名：<span id="caseNameDisplay" class="font-medium">-</span></div>
+                                    <div>國曆生日（西元）：<span id="caseSolarDob" class="font-medium">-</span></div>
+                                    <div>農曆生日（西元）：<span id="caseLunarDob" class="font-medium">-</span></div>
+                                </div>
+                            </div>
+                            <div class="text-gray-500 mt-4 md:mt-0">
+                                產生時間：<span id="reportGeneratedAt">-</span>
+                            </div>
+                        </div>
+
+                        <!-- 國農曆靈數 -->
+                        <div>
+                            <h3 class="text-xl font-semibold text-indigo-700 mb-3">國農曆靈數：本性 / 外在 / 內在 與貴人</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead>
+                                        <tr class="bg-gray-50">
+                                            <th class="py-2 px-3 border-b text-left">類別</th>
+                                            <th class="py-2 px-3 border-b text-left">本性</th>
+                                            <th class="py-2 px-3 border-b text-left">外在</th>
+                                            <th class="py-2 px-3 border-b text-left">內在</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="py-2 px-3 border-b font-medium">國曆</td>
+                                            <td class="py-2 px-3 border-b"><div id="repSolarEssence" class="font-bold"></div><div class="text-sm text-gray-600" id="repSolarEssenceBen"></div></td>
+                                            <td class="py-2 px-3 border-b"><div id="repSolarExternal" class="font-bold"></div><div class="text-sm text-gray-600" id="repSolarExternalBen"></div></td>
+                                            <td class="py-2 px-3 border-b"><div id="repSolarInternal" class="font-bold"></div><div class="text-sm text-gray-600" id="repSolarInternalBen"></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2 px-3 border-b font-medium">農曆</td>
+                                            <td class="py-2 px-3 border-b"><div id="repLunarEssence" class="font-bold"></div><div class="text-sm text-gray-600" id="repLunarEssenceBen"></div></td>
+                                            <td class="py-2 px-3 border-b"><div id="repLunarExternal" class="font-bold"></div><div class="text-sm text-gray-600" id="repLunarExternalBen"></div></td>
+                                            <td class="py-2 px-3 border-b"><div id="repLunarInternal" class="font-bold"></div><div class="text-sm text-gray-600" id="repLunarInternalBen"></div></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 靈數解釋（去重） -->
+                        <div>
+                            <h3 class="text-xl font-semibold text-indigo-700 mb-3">靈數解釋（去重顯示）</h3>
+                            <div id="repNumerologyExplanations" class="space-y-4"></div>
+                        </div>
+
+                        <!-- 今年流年 -->
+                        <div>
+                            <h3 class="text-xl font-semibold text-indigo-700 mb-3">今年流年</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-indigo-100 p-4 rounded">
+                                    <div class="text-sm text-gray-600">國曆流年</div>
+                                    <div id="repCurrentSolarYear" class="text-3xl font-bold text-indigo-800">-</div>
+                                    <div id="repCurrentSolarYearCard" class="text-lg text-indigo-700">-</div>
+                                </div>
+                                <div class="bg-purple-100 p-4 rounded">
+                                    <div class="text-sm text-gray-600">農曆流年</div>
+                                    <div id="repCurrentLunarYear" class="text-3xl font-bold text-purple-800">-</div>
+                                    <div id="repCurrentLunarYearCard" class="text-lg text-purple-700">-</div>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <h4 class="font-medium text-gray-700 mb-2">流年解釋</h4>
+                                <div id="repYearlyExplanations" class="space-y-3"></div>
+                            </div>
+                        </div>
+
+                        <!-- 前後五年流年 -->
+                        <div>
+                            <h3 class="text-xl font-semibold text-indigo-700 mb-3">前後五年流年</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full" id="repTenYearTable">
+                                    <thead>
+                                        <tr class="bg-gray-50">
+                                            <th class="py-2 px-4 border-b text-left">年份</th>
+                                            <th class="py-2 px-4 border-b text-left">國曆流年</th>
+                                            <th class="py-2 px-4 border-b text-left">農曆流年</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div> <!-- /Printable -->
+                </div>
+            </div>
+<script type="module" src="./js/numerology.js?v=20250726b"></script>
+<script>
+if('serviceWorker'in navigator){
+ window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(err=>console.error('SW registration failed:',err));});
+}
+</script>
+<div class="tab-content" id="yearFlow">
+<div class="bg-indigo-50 p-6 rounded-lg">
+<h2 class="text-xl font-semibold mb-4 text-indigo-700">今年流月 ➜ 點選看流日</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center text-sm mb-6" id="yearFlowGrid"></div>
+<div class="hidden" id="monthFlowCalendar"></div>
+</div>
+
+<script>
+  // 定義具有 setter 的 SOUL_OFFSET：任何變更都會廣播事件，讓所有模組即時收到
+  (function(){
+    var _val = 0;
+    Object.defineProperty(window, 'SOUL_OFFSET', {
+      get: function(){ return _val; },
+      set: function(v){
+        var nv = Number(v) || 0;
+        if(nv === _val) { _val = nv; return; }
+        _val = nv;
+        try {
+          window.dispatchEvent(new CustomEvent('soul:offset', { detail: { value: _val } }));
+        } catch (e) { console.warn('dispatch soul:offset failed', e); }
+      }
+    });
+  })();
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const sel = document.getElementById('soulOffset');
+    if(sel){
+      // 初始化並綁定變更
+      window.SOUL_OFFSET = Number(sel.value) || 0;
+      sel.addEventListener('change', ()=>{ window.SOUL_OFFSET = Number(sel.value)||0; if(window.RECALC_ALL){ window.RECALC_ALL(); } });
+    }
+  });
+</script>
+<script src="js/yearFlow.js?v=20250726b"></script>
+
+<!-- 匯出 PDF 依賴 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js" referrerpolicy="no-referrer"></script>
+<script src="js/report.js?v=20250727"></script>
+
+</body>
+</html>
